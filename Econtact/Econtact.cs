@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,6 +15,8 @@ namespace Econtact
 {
     public partial class Econtact : Form
     {
+        static string myconnstring = ConfigurationManager.ConnectionStrings["connString"].ConnectionString;
+
         public Econtact()
         {
             InitializeComponent();
@@ -40,7 +44,7 @@ namespace Econtact
             if (success == true)
             {
                 //Successfully Inserted
-                MessageBox.Show("New Contact Successfully Inserted");
+                MessageBox.Show("New Contact Successfully Inserted", "Success");
 
                 // Clear the all inputs fields
                 Clear();
@@ -48,7 +52,7 @@ namespace Econtact
             else
             {
                 //Failed to Add Contact
-                MessageBox.Show("Failed to add New Contact. Try Again.");
+                MessageBox.Show("Failed to add New Contact. Try Again.", "Error");
             }
             // Load Data on Data Grid View
             DataTable dt = c.Select();
@@ -98,7 +102,7 @@ namespace Econtact
             if(success==true)
             {
                 // Updated Successfully
-                MessageBox.Show("Contact has been successfully Updated.");
+                MessageBox.Show("Contact has been successfully Updated.", "Success");
                 // Load Data on Data Grid View
                 DataTable dt = c.Select();
                 dgvContactList.DataSource = dt;
@@ -108,7 +112,7 @@ namespace Econtact
             else
             {
                 // Failed to Update
-                MessageBox.Show("Failed to Update Contact.Try Again.");
+                MessageBox.Show("Failed to Update Contact.Try Again.", "Error");
             }
             
         }
@@ -140,7 +144,7 @@ namespace Econtact
             if (success == true)
             {
                 // Successfully Deleted
-                MessageBox.Show("Contact successfully deleted.");
+                MessageBox.Show("Contact successfully deleted.", "Success");
                 // Refresh Data GridView
                 // Load Data on Data GRidview
                 DataTable dt = c.Select(); 
@@ -151,8 +155,22 @@ namespace Econtact
             else
             {
                 // Failed to Delete
-                MessageBox.Show("Failed to Delete Dontact. Try Again.");
+                MessageBox.Show("Failed to Delete Dontact. Try Again.", "Error");
             }
+        }
+
+        private void textBoxSearch_TextChanged(object sender, EventArgs e)
+        {
+            // Get teh value from text box
+            string keyword = txtBoxSearch.Text;
+            SqlConnection conn = new SqlConnection(myconnstring);
+
+            SqlDataAdapter sda = new SqlDataAdapter("SELECT * FROM tbl_contact WHERE FirstName LIKE '%" + keyword + "%' OR LastName LIKE '%" + keyword + "%' OR Address LIKE '%" + keyword + "%'", conn);
+            DataTable dt = new DataTable();
+
+            sda.Fill(dt);
+            dgvContactList.DataSource = dt;
+
         }
     }
 }
