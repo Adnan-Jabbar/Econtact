@@ -16,5 +16,10 @@ namespace Econtact
         {
             InitializeComponent();
         }
+
+        private void txtBoxAddress_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
